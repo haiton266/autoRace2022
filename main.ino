@@ -1,6 +1,6 @@
 #include <AccelStepper.h>
 #include <MultiStepper.h>
-
+#include "probeLine.ino"
 int en = 8;
 // The X Stepper pins
 #define STEPPER1_DIR_PIN 5
