@@ -1,6 +1,6 @@
 #include <AccelStepper.h>
 #include <MultiStepper.h>
-#include "probeLine.ino"
+//#include "probeLine.ino"
 int en = 8;
 // The X Stepper pins
 #define STEPPER1_DIR_PIN 5
@@ -36,13 +36,12 @@ void back()
 {
     runn(-50, -50);
 }
-void turn(int degree)
+const float R = 141.42; // R là khoảng cách tâm trục tới lốp // số hiện tại là đường kính
+const float r = 69.18;  // r là bán kính lốp
+void rotate(int degree)
 {
-    int steps = (int)degree / 1.8;
-    if (steps < 0)
-        runn(steps, -steps);
-    else
-        runn(-steps, steps);
+    int steps = (int)degree * 5 * R / (9 * r);
+    runn(steps, -steps);
 }
 void setup()
 {
@@ -58,6 +57,7 @@ void setup()
     //    stepper2.setAcceleration(10);
     steppers.addStepper(stepper1);
     steppers.addStepper(stepper2);
+    //    rotate(180);
 }
 
 void loop()
