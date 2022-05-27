@@ -26,11 +26,36 @@ void setup()
 }
 void loop()
 {
-    remote0();
-    remote1();
+    // 0 bánh phải
+    // 1 bánh trái
+    switch (lech)
+    {
+    case 0: // đang ổn định thì cứ tăng 2 bánh lên
+        remote0(5);
+        remote1(5);
+        break;
+    case 1: // 000100 hoặc 001110(nhiễu) lệch phải -> giảm bánh phải chậm xuống // PID tính
+        remote0(-2);
+        remote1(0);
+        break;
+    case -1: // 001000 hoặc 011100(nhiễu) lệch trái -> giảm bánh trái
+        remote0(0);
+        remote1(-2);
+        break;
+    case 2: // 001000 lệch phải -> giảm bánh phải
+        remote0(-3);
+        remote1(0);
+        break;
+    case -2: // 001000 hoặc 001110(nhiễu) lệch trái -> giảm bánh trái
+        remote0(-3);
+        remote1(0);
+        break;
+    default:
+        break;
+    }
 }
 
-void remote0()
+void remote0(int accel)
 {
     curTime = micros();
     if (sum[0] > 1950)
@@ -39,7 +64,7 @@ void remote0()
     if (curTime - lastTime[0] > 25000)
     {
         lastTime[0] = curTime;
-        sum[0] += 5;
+        sum[0] += accel;
     }
     if (curTime - lastStep[0] > (2000 - sum[0]))
     {
@@ -47,7 +72,7 @@ void remote0()
         setXung0();
     }
 }
-void remote1()
+void remote1(int accel) // nên truyền vào gia tốc
 {
     curTime = micros();
     if (sum[1] > 1950)
@@ -56,7 +81,7 @@ void remote1()
     if (curTime - lastTime[1] > 25000) // cứ 25mS thì set 1 lần -> 1S set 40 lần
     {
         lastTime[1] = curTime;
-        sum[1] += 5;
+        sum[1] += accel;
     }
     if (curTime - lastStep[1] > (2000 - sum[1])) // chu kỳ càng ngắn thì tốc độ càng cao ( thời gian chạy 1 bước ), tối thiếu =50
     {                                            // Nếu coi như coi sum là vận tốc, thì để điều chỉnh vận tốc, ta chỉ cần ???

@@ -33,8 +33,6 @@ int getDif()
         b[6] = 0;
     if (b[3] == 1 && b[4] == 1)
         return;
-    // Update trả về degree để áp dụng PID trả về độ để cần xoay
-    // phòng trường hợp nhiễu, nhận 3 cảm biến 1 cùng lúc -> xử lý coi như nhận 1 con cảm biến ở giữa
     else if (b[3] == 1 && b[5] == 1) // 001110
         return 1;
     else if (b[2] == 1 && b[4] == 1) // 011100

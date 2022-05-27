@@ -1,70 +1,115 @@
-#include <AccelStepper.h>
-#include <MultiStepper.h>
-//#include "probeLine.ino"
+#include "probeLine.ino"
 int en = 8;
 // The X Stepper pins
-#define STEPPER1_DIR_PIN 5
-#define STEPPER1_STEP_PIN 2
+#define STEPPER0_DIR_PIN 5
+#define STEPPER0_STEP_PIN 2
 // The Y stepper pins
-#define STEPPER2_DIR_PIN 6
-#define STEPPER2_STEP_PIN 3
+#define STEPPER1_DIR_PIN 6
+#define STEPPER1_STEP_PIN 3
 
-bool check = false;
-AccelStepper stepper1(AccelStepper::DRIVER, STEPPER1_STEP_PIN, STEPPER1_DIR_PIN);
-AccelStepper stepper2(AccelStepper::DRIVER, STEPPER2_STEP_PIN, STEPPER2_DIR_PIN);
-
-MultiStepper steppers;
-int priPosition0 = 0;
-int priPosition1 = 0;
-// each 50 steps
-void runn(int x, int y)
-{
-
-    long positions[2]; // Array of desired stepper positions
-    positions[0] = priPosition0 + x;
-    positions[1] = priPosition1 + y;
-    steppers.moveTo(positions);
-    steppers.runSpeedToPosition();
-    priPosition0 = positions[0];
-    priPosition1 = positions[1];
-}
-void up()
-{
-    runn(50, 50);
-}
-void back()
-{
-    runn(-50, -50);
-}
 const float R = 141.42; // R là khoảng cách tâm trục tới lốp // số hiện tại là đường kính
 const float r = 69.18;  // r là bán kính lốp
-void rotate(int degree)
-{
-    int steps = (int)degree * 5 * R / (9 * r);
-    runn(steps, -steps);
-}
+
+long int cycle[2], lastStep[2] = {0, 0}, accel[2], v0[2], ve[2], lastTime[2] = {0, 0}, sum[2];
+long int mySpeed, curTime, vMax, lasttimecr1;
+int STEPPER_STEP_PIN[2] = {2, 3};
+
+int temp, temp2, lech;
 void setup()
 {
+    Serial.begin(250000);
     pinMode(en, OUTPUT);                // Enable pin - chân khởi động - nối vào GND sẽ giúp ta bật động cơ bước, nối vô VCC động cơ bước được thả ra. Nôm na: GND = servo.attach, VCC = servo.detach
+    pinMode(STEPPER0_STEP_PIN, OUTPUT); // Step pin
+    pinMode(STEPPER0_DIR_PIN, OUTPUT);  // Dir - pin
     pinMode(STEPPER1_STEP_PIN, OUTPUT); // Step pin
-    pinMode(STEPPER1_DIR_PIN, OUTPUT);  // Dir - pin
-    pinMode(STEPPER2_STEP_PIN, OUTPUT); // Step pin
-    pinMode(STEPPER2_DIR_PIN, OUTPUT);  // Dir - pi
+    pinMode(STEPPER1_DIR_PIN, OUTPUT);  // Dir - pi
     digitalWrite(en, LOW);              // Set Enable low
-    stepper1.setMaxSpeed(200);
-    //    stepper1.setAcceleration(10);
-    stepper2.setMaxSpeed(200);
-    //    stepper2.setAcceleration(10);
-    steppers.addStepper(stepper1);
-    steppers.addStepper(stepper2);
-    //    rotate(180);
 }
-
 void loop()
 {
-    up();
-    Serial.println(priPosition0);
-    Serial.println(priPosition1);
-    //    int degreeDif = getDif();
-    // đang chạy mà cua được ko ???
+    // 0 bánh phải
+    // 1 bánh trái
+    lech = getDif(); // lấy giá trị lệch từ hàm trong file "probeLine.ino"
+    switch (lech)
+    {
+    case 0: // đang ổn định thì cứ tăng 2 bánh lên
+        remote0(5);
+        remote1(5);
+        break;
+    case 1: // 000100 hoặc 001110(nhiễu) lệch phải 1 bước -> giảm bánh phải chậm xuống // PID tính
+        remote0(-5);
+        remote1(0);
+        break;
+    case -1:
+        remote0(0);
+        remote1(-5);
+        break;
+    case 2:
+        remote0(-10);
+        remote1(0);
+        break;
+    case -2:
+        remote0(0);
+        remote1(-10);
+        break;
+    case 3:
+        remote0(-3); // lệch nhiều hơn thì vừa lùi vừa tiến
+        remote1(1);
+        break;
+    case -3:
+        remote0(-3);
+        remote1(0);
+        break;
+    default:
+        break;
+    }
+}
+
+void remote0(int accel) // truyền vào gia tốc
+{
+    curTime = micros();
+    if (sum[0] > 1950)
+        sum[0] = 1950;
+
+    if (curTime - lastTime[0] > 25000)
+    {
+        lastTime[0] = curTime;
+        sum[0] += accel;
+    }
+    if (curTime - lastStep[0] > (2000 - sum[0]))
+    {
+        lastStep[0] = curTime;
+        setXung0();
+    }
+}
+void remote1(int accel) // nên truyền vào gia tốc
+{
+    curTime = micros();
+    if (sum[1] > 1950)
+        sum[1] = 1950;
+
+    if (curTime - lastTime[1] > 25000) // cứ 25mS thì set 1 lần -> 1S set 40 lần
+    {
+        lastTime[1] = curTime;
+        sum[1] += accel;
+    }
+    if (curTime - lastStep[1] > (2000 - sum[1])) // chu kỳ càng ngắn thì tốc độ càng cao ( thời gian chạy 1 bước ), tối thiếu =50
+    {                                            // Nếu coi như coi sum là vận tốc, thì để điều chỉnh vận tốc, ta chỉ cần ???
+        lastStep[1] = curTime;
+        setXung1();
+    }
+}
+void setXung0()
+{
+    digitalWrite(STEPPER0_STEP_PIN, HIGH);
+    delayMicroseconds(2);
+    digitalWrite(STEPPER0_STEP_PIN, LOW);
+    delayMicroseconds(2);
+}
+void setXung1()
+{
+    digitalWrite(STEPPER1_STEP_PIN, HIGH);
+    delayMicroseconds(2);
+    digitalWrite(STEPPER1_STEP_PIN, LOW);
+    delayMicroseconds(2);
 }
