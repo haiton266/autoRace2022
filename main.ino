@@ -29,6 +29,8 @@ void loop()
 {
     // 0 bánh phải
     // 1 bánh trái
+
+    // Dò line
     lech = getDif(); // lấy giá trị lệch từ hàm trong file "probeLine.ino"
     switch (lech)
     {
@@ -40,7 +42,7 @@ void loop()
         remote0(-5);
         remote1(0);
         break;
-    case -1:
+    case -1: // tương tự những trường hợp trên, xem file giá trị sensor.docx
         remote0(0);
         remote1(-5);
         break;
@@ -53,13 +55,14 @@ void loop()
         remote1(-10);
         break;
     case 3:
-        remote0(-3); // lệch nhiều hơn thì vừa lùi vừa tiến
-        remote1(1);
+        remote0(-10); // lệch nhiều hơn thì vừa lùi vừa tiến
+        remote1(5);
         break;
     case -3:
-        remote0(-3);
-        remote1(0);
+        remote0(5);
+        remote1(-10);
         break;
+    // còn nữa ...
     default:
         break;
     }
@@ -71,30 +74,30 @@ void remote0(int accel) // truyền vào gia tốc
     if (sum[0] > 1950)
         sum[0] = 1950;
 
-    if (curTime - lastTime[0] > 25000)
+    if (curTime - lastTime[0] > 25000) // cứ 25mS thì tăng vận tốc 1 lần -> 1S set 40 lần
     {
         lastTime[0] = curTime;
-        sum[0] += accel;
+        sum[0] += accel; // vận tốc mới = cũ  + gia tốc
     }
-    if (curTime - lastStep[0] > (2000 - sum[0]))
+    if (curTime - lastStep[0] > (2000 - sum[0])) // chu kỳ càng ngắn thì tốc độ càng cao ( thời gian chạy 1 bước ), tối thiếu = 50
     {
         lastStep[0] = curTime;
         setXung0();
     }
 }
-void remote1(int accel) // nên truyền vào gia tốc
+void remote1(int accel)
 {
     curTime = micros();
     if (sum[1] > 1950)
         sum[1] = 1950;
 
-    if (curTime - lastTime[1] > 25000) // cứ 25mS thì set 1 lần -> 1S set 40 lần
+    if (curTime - lastTime[1] > 25000)
     {
         lastTime[1] = curTime;
         sum[1] += accel;
     }
-    if (curTime - lastStep[1] > (2000 - sum[1])) // chu kỳ càng ngắn thì tốc độ càng cao ( thời gian chạy 1 bước ), tối thiếu =50
-    {                                            // Nếu coi như coi sum là vận tốc, thì để điều chỉnh vận tốc, ta chỉ cần ???
+    if (curTime - lastStep[1] > (2000 - sum[1]))
+    {
         lastStep[1] = curTime;
         setXung1();
     }

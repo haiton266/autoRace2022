@@ -7,6 +7,7 @@ int getDif()
     l[4] = analogRead(3);
     l[5] = analogRead(4);
     l[6] = analogRead(5);
+
     if (l[1] < 555)
         b[1] = 1;
     else
@@ -31,8 +32,11 @@ int getDif()
         b[6] = 1;
     else
         b[6] = 0;
+
+    // Đọc file Giá trị sensor.docx để hiểu rõ
     if (b[3] == 1 && b[4] == 1)
-        return;
+        return 0;
+    // phòng trường hợp nhiễu, nhận 3 cảm biến 1 cùng lúc -> xử lý coi như nhận 1 con cảm biến ở giữa
     else if (b[3] == 1 && b[5] == 1) // 001110
         return 1;
     else if (b[2] == 1 && b[4] == 1) // 011100
