@@ -1,4 +1,4 @@
-int getDif()
+int getEror()
 {
     int l[6], b[6];
     l[1] = analogRead(0);

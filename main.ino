@@ -1,4 +1,5 @@
 #include "probeLine.ino"
+#include "pid.ino"
 int en = 8;
 // The X Stepper pins
 #define STEPPER0_DIR_PIN 5
@@ -14,7 +15,7 @@ long int cycle[2], lastStep[2] = {0, 0}, accel[2], v0[2], ve[2], lastTime[2] = {
 long int mySpeed, curTime, vMax, lasttimecr1;
 int STEPPER_STEP_PIN[2] = {2, 3};
 
-int temp, temp2, lech;
+int temp, temp2, error, PIDValue;
 void setup()
 {
     Serial.begin(250000);
@@ -24,6 +25,7 @@ void setup()
     pinMode(STEPPER1_STEP_PIN, OUTPUT); // Step pin
     pinMode(STEPPER1_DIR_PIN, OUTPUT);  // Dir - pi
     digitalWrite(en, LOW);              // Set Enable low
+    error = 0;
 }
 void loop()
 {
@@ -31,41 +33,45 @@ void loop()
     // 1 bánh trái
 
     // Dò line
-    lech = getDif(); // lấy giá trị lệch từ hàm trong file "probeLine.ino"
-    switch (lech)
-    {
-    case 0: // đang ổn định thì cứ tăng 2 bánh lên
-        remote0(5);
-        remote1(5);
-        break;
-    case 1: // 000100 hoặc 001110(nhiễu) lệch phải 1 bước -> giảm bánh phải chậm xuống // PID tính
-        remote0(-5);
-        remote1(0);
-        break;
-    case -1: // tương tự những trường hợp trên, xem file giá trị sensor.docx
-        remote0(0);
-        remote1(-5);
-        break;
-    case 2:
-        remote0(-10);
-        remote1(0);
-        break;
-    case -2:
-        remote0(0);
-        remote1(-10);
-        break;
-    case 3:
-        remote0(-10); // lệch nhiều hơn thì vừa lùi vừa tiến
-        remote1(5);
-        break;
-    case -3:
-        remote0(5);
-        remote1(-10);
-        break;
-    // còn nữa ...
-    default:
-        break;
-    }
+    error = getError(); // lấy giá trị lệch từ hàm trong file "probeLine.ino"
+    PIDValue = computePID(error);
+    remote0(PIDValue);
+    remote1(-PIDValue);
+
+    // switch (error)
+    // {
+    // case 0: // đang ổn định thì cứ tăng 2 bánh lên
+    //     remote0(5);
+    //     remote1(5);
+    //     break;
+    // case 1: // 000100 hoặc 001110(nhiễu) lệch phải 1 bước -> giảm bánh phải chậm xuống // PID tính
+    //     remote0(-5);
+    //     remote1(0);
+    //     break;
+    // case -1: // tương tự những trường hợp trên, xem file giá trị sensor.docx
+    //     remote0(0);
+    //     remote1(-5);
+    //     break;
+    // case 2:
+    //     remote0(-10);
+    //     remote1(0);
+    //     break;
+    // case -2:
+    //     remote0(0);
+    //     remote1(-10);
+    //     break;
+    // case 3:
+    //     remote0(-10); // lệch nhiều hơn thì vừa lùi vừa tiến
+    //     remote1(5);
+    //     break;
+    // case -3:
+    //     remote0(5);
+    //     remote1(-10);
+    //     break;
+    // // còn nữa ...
+    // default:
+    //     break;
+    // }
 }
 
 void remote0(int accel) // truyền vào gia tốc
