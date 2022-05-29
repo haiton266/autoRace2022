@@ -1,6 +1,6 @@
 const int Kp = 5, Ki = 2, Kd = 2;
 
-int P, I, D, previous_error = 0;
+int P, I = 0, D, previous_error = 0;
 int computePID(int error)
 {
     P = error;                  // Proportional: tỉ lệ, lệch line hiện tại mình truyền vào

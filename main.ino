@@ -77,14 +77,15 @@ void loop()
 void remote0(int accel) // truyền vào gia tốc
 {
     curTime = micros();
-    if (sum[0] > 1950)
-        sum[0] = 1950;
 
     if (curTime - lastTime[0] > 25000) // cứ 25mS thì tăng vận tốc 1 lần -> 1S set 40 lần
     {
         lastTime[0] = curTime;
         sum[0] += accel; // vận tốc mới = cũ  + gia tốc
     }
+
+    sum[0] = constrain(sum[0], 0, 1950); // lấy vận tốc từ [0,1950]
+
     if (curTime - lastStep[0] > (2000 - sum[0])) // chu kỳ càng ngắn thì tốc độ càng cao ( thời gian chạy 1 bước ), tối thiếu = 50
     {
         lastStep[0] = curTime;
@@ -94,14 +95,15 @@ void remote0(int accel) // truyền vào gia tốc
 void remote1(int accel)
 {
     curTime = micros();
-    if (sum[1] > 1950)
-        sum[1] = 1950;
 
     if (curTime - lastTime[1] > 25000)
     {
         lastTime[1] = curTime;
         sum[1] += accel;
     }
+
+    sum[1] = constrain(sum[1], 0, 1950);
+
     if (curTime - lastStep[1] > (2000 - sum[1]))
     {
         lastStep[1] = curTime;
