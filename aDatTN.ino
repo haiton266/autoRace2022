@@ -78,6 +78,8 @@ void remote()
   speed_x -= PID_value;          // x là bánh phải, thì bánh phải giảm tốc để cua phải (PID_value > 0)
   speed_y += PID_value;
 }
+
+//  Ham Dieu khien  step 1
 void Clock_x()
 {
   digitalWrite(STEP_X, HIGH);
@@ -85,7 +87,7 @@ void Clock_x()
   digitalWrite(STEP_X, LOW);
   delayMicroseconds(1);
 }
-//  Ham Dieu khien  step 1
+// Ham dieu khien step 2
 void Clock_y()
 {
   digitalWrite(STEP_Y, HIGH);
@@ -94,7 +96,6 @@ void Clock_y()
   delayMicroseconds(1);
 }
 
-// Ham dieu khien step 2
 void Driver_x()
 {
 
@@ -313,11 +314,11 @@ int getError()
 
   // thêm trường hợp 000000 thì mình sẽ chạy lui line cũ để dò tiếp
   else
-    return -6;
+    return 0; // Hiện tại cho chạy thẳng ở vạch đứt đoạn
 }
 int computePID(int err)
 {
-  Kp = 5;
+  Kp = 20;
   Ki = 0;
   Kd = 0;
 
