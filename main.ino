@@ -8,14 +8,14 @@ int en = 8;
 #define STEPPER1_DIR_PIN 6
 #define STEPPER1_STEP_PIN 3
 
-const float R = 141.42; // R là khoảng cách tâm trục tới lốp // số hiện tại là đường kính
-const float r = 69.18;  // r là bán kính lốp
+const float R = 7.071; // R là khoảng cách tâm trục tới lốp (cm) // số hiện tại là đường kính
+const float r = 3.459; // r là bán kính lốp (cm)
 
 long int cycle[2], lastStep[2] = {0, 0}, accel[2], v0[2], ve[2], lastTime[2] = {0, 0}, sum[2];
 long int mySpeed, curTime, vMax, lasttimecr1;
-int STEPPER_STEP_PIN[2] = {2, 3};
 
 int temp, temp2, error, PIDValue;
+
 void setup()
 {
     Serial.begin(250000);
