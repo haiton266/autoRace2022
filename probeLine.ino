@@ -33,10 +33,15 @@ int getError()
     else
         b[6] = 0;
 
-    // Đọc file Giá trị sensor.docx để hiểu rõ
-    if (b[3] == 1 && b[4] == 1)
+    // nhận 4 cảm biến
+    if (b[3] == 1 && b[6] == 1) // 001111
+        return 2;
+    else if (b[2] == 1 && b[5] == 1) // 011110
         return 0;
-    // phòng trường hợp nhiễu, nhận 3 cảm biến 1 cùng lúc -> xử lý coi như nhận 1 con cảm biến ở giữa
+    else if (b[1] == 1 && b[4] == 1) // 111100
+        return -2;
+
+    // nhận 3 cảm biến
     else if (b[3] == 1 && b[5] == 1) // 001110
         return 1;
     else if (b[2] == 1 && b[4] == 1) // 011100
@@ -45,7 +50,10 @@ int getError()
         return 3;
     else if (b[1] == 1 && b[3] == 1) // 111000
         return -3;
+
     // nhận 2 cảm biến
+    else if (b[3] == 1 && b[4] == 1)
+        return 0;
     else if (b[4] == 1 && b[5] == 1) // 000110
         return 2;
     else if (b[2] == 1 && b[3] == 1) // 011000
@@ -54,6 +62,7 @@ int getError()
         return 4;
     else if (b[1] == 1 && b[2] == 1) // 110000
         return -4;
+
     // nhận 1 cảm biến
     else if (b[4] == 1) // 000100
         return 1;
@@ -67,6 +76,7 @@ int getError()
         return 5;
     else if (b[1] == 1) // 100000
         return -5;
+
     // thêm trường hợp 000000 thì mình sẽ chạy lui line cũ để dò tiếp
     else
         return -6;
