@@ -68,6 +68,4 @@ int getError()
     else if (b[1] == 1) // 100000
         return -5;
     // thêm trường hợp 000000 thì mình sẽ chạy lui line cũ để dò tiếp
-    else
-        return -6;
 }
