@@ -5,7 +5,9 @@ Servo myservo;
 const int trig = 4;
 const int echo = 7;
 int servoPin = 9;
-int dir[13] = {1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 1}; // 13 đoạn thì cua 12 lần
+
+float arr[13] = {0, 45, 70, 45, 25, 75, 25, 25, 25, 25, 25, 50}; // lưu khoảng cách từng đoạn
+int dir[13] = {1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 1};              // 13 đoạn thì cua 12 lần
 int lengthArr = 13, steps, distance;
 const float R = 7.071; // R là khoảng cách tâm trục tới lốp (cm)
 const float r = 3.459; // r là bán kính lốp (cm)
