@@ -1,3 +1,18 @@
+// chèn sau
+#include <Servo.h>
+Servo myservo;
+
+const int trig = 4;
+const int echo = 7;
+int servoPin = 9;
+int dir[13] = {1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 1}; // 13 đoạn thì cua 12 lần
+int lengthArr = 13, steps, distance;
+const float R = 7.071; // R là khoảng cách tâm trục tới lốp (cm)
+const float r = 3.459; // r là bán kính lốp (cm)
+const float R = 7.125; // R là khoảng cách tâm trục tới lốp (cm)
+const float r = 3.44;  // r là bán kính lốp (cm)
+const float pi = 3.14159265359;
+
 float calSteps(float distance) // tính số bước
 {
     // r * 2pi            1600 steps
@@ -44,13 +59,7 @@ void turnLeft(int deg) // trái
         delayMicroseconds(500);
     }
 }
-// chèn sau
-#include <Servo.h>
-Servo myservo;
 
-const int trig = 4;
-const int echo = 7;
-int servoPin = 9;
 // setup
 pinMode(trig, OUTPUT);
 pinMode(echo, INPUT);
