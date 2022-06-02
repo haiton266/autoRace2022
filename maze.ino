@@ -67,22 +67,21 @@ pinMode(trig, OUTPUT);
 pinMode(echo, INPUT);
 myservo.attach(servoPin);
 
-void getDistance(int deg)
+float getDistance(int deg)
 {
     myservo.write(deg);
-    while (myservo.read() == deg)
-    {
-        unsigned long duration;
-        float distance;
-        digitalWrite(trig, 0);
-        delayMicroseconds(2);
-        digitalWrite(trig, 1);
-        delayMicroseconds(5);
-        digitalWrite(trig, 0);
-        duration = pulseIn(echo, HIGH);
-        distance = float(duration / 2 / 2.9412); // trả về mm
-        return distance;
-    }
+    while (myservo.read() != deg)
+        ;
+    unsigned long duration;
+    float distance;
+    digitalWrite(trig, 0);
+    delayMicroseconds(2);
+    digitalWrite(trig, 1);
+    delayMicroseconds(5);
+    digitalWrite(trig, 0);
+    duration = pulseIn(echo, HIGH);
+    distance = float(duration * 10 / 2 / 2.9412); // trả về mm
+    return distance;
 }
 void stabilize()
 {
@@ -96,6 +95,7 @@ void stabilize()
 }
 void maze() // hàm gọi chạy mê cung
 {
+    // cho chạy vô mê cung tầm 10cm rồi tính
     // stabilize(); // ổn định vị trí
     for (int i = 0; i < lengthArr; i++)
     {
