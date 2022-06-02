@@ -21,8 +21,6 @@ void Driver_x(); // speed driver x
 void Driver_y(); // speed driver y
 void read_sensor();
 void remote();
-int v_x = 0;
-int v_y = 0;
 int a_x, a_y; // gia toc
 int tick_time;
 int error;
@@ -58,8 +56,8 @@ void setup()
   // #define DIR_X 5
   //#define DIR_Y 6
   Serial.begin(115200);
-  speed_x = 0;
-  speed_y = 0;
+  speed_x = 70;
+  speed_y = 70;
   I = 0;              // biến trong hàm PID
   previous_error = 0; // biến trong hàm PID
   Timer1.initialize(100);
@@ -77,6 +75,10 @@ void remote()
   PID_value = computePID(error); // từ lỗi tính PID
   speed_x -= PID_value;          // x là bánh phải, thì bánh phải giảm tốc để cua phải (PID_value > 0)
   speed_y += PID_value;
+  if (speed_x < 0)
+    speed_x = 0;
+  if (speed_y < 0)
+    speed_y = 0;
 }
 
 //  Ham Dieu khien  step 1
@@ -318,7 +320,7 @@ int getError()
 }
 int computePID(int err)
 {
-  Kp = 20;
+  Kp = 10;
   Ki = 0;
   Kd = 0;
 

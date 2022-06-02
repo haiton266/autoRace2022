@@ -1,3 +1,37 @@
+int e[64], previous_error;
+void init()
+{
+    e[4] = 1;
+    e[2] = 2;
+    e[1] = 3;
+    e[6] = 4;
+    e[3] = 5;
+    e[33] = 6;
+    e[7] = 7;
+    e[14] = 8;
+    e[0] = 9;
+    e[30] = 10;
+    e[12] = 0;
+    e[8] = -1;
+    e[16] = -2;
+    e[32] = -3;
+    e[24] = -4;
+    e[48] = -5;
+    e[56] = -7;
+    e[28] = -8;
+    e[63] = -9;
+}
+int findError(int s1, int s2, int s3, int s4, int s5, int s6)
+{
+    int val = s6 + 2 * s5 + 4 * s4 + 8 * s3 + 16 * s2 + 32 * s1; // chuyển nhị phân
+    int res = e[val];
+    if (val == 30 || val == 33) // trường hợp 011110 và 100001
+        if (previous_error > 0)
+            res = -res;
+    previous_error = res;
+    return res;
+}
+
 int getError()
 {
     int l[6], b[6];
@@ -32,52 +66,5 @@ int getError()
         b[6] = 1;
     else
         b[6] = 0;
-
-    // nhận 4 cảm biến
-    if (b[3] == 1 && b[6] == 1) // 001111
-        return 2;
-    else if (b[2] == 1 && b[5] == 1) // 011110
-        return 0;
-    else if (b[1] == 1 && b[4] == 1) // 111100
-        return -2;
-
-    // nhận 3 cảm biến
-    else if (b[3] == 1 && b[5] == 1) // 001110
-        return 1;
-    else if (b[2] == 1 && b[4] == 1) // 011100
-        return -1;
-    else if (b[4] == 1 && b[6] == 1) // 000111
-        return 3;
-    else if (b[1] == 1 && b[3] == 1) // 111000
-        return -3;
-
-    // nhận 2 cảm biến
-    else if (b[3] == 1 && b[4] == 1)
-        return 0;
-    else if (b[4] == 1 && b[5] == 1) // 000110
-        return 2;
-    else if (b[2] == 1 && b[3] == 1) // 011000
-        return -2;
-    else if (b[5] == 1 && b[6] == 1) // 000011
-        return 4;
-    else if (b[1] == 1 && b[2] == 1) // 110000
-        return -4;
-
-    // nhận 1 cảm biến
-    else if (b[4] == 1) // 000100
-        return 1;
-    else if (b[3] == 1) // 001000
-        return -1;
-    else if (b[5] == 1) // 000010
-        return 3;
-    else if (b[2] == 1) // 010000
-        return -3;
-    else if (b[6] == 1) // 000001
-        return 5;
-    else if (b[1] == 1) // 100000
-        return -5;
-
-    // thêm trường hợp 000000 thì mình sẽ chạy lui line cũ để dò tiếp
-    else
-        return -6;
+    error = findError(b[1], b[2], b[3], b[4], b[5], b[6]);
 }
