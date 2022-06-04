@@ -50,7 +50,7 @@ void setup()
   pinMode(A5, INPUT);
   interval = 800;
   digitalWrite(DIR_Y, HIGH);
-  digitalWrite(DIR_X, LOW);
+  digitalWrite(DIR_X, HIGH);
   digitalWrite(ENB, LOW);
   // digitalWrite(ENB_y, LOW);
   // #define DIR_X 5
