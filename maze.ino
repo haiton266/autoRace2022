@@ -12,8 +12,8 @@ const int trig = 4;
 const int echo = 7;
 int servoPin = 9;
 
-float arr[13] = {0, 45, 73, 45, 23, 73, 23, 23, 25, 23, 23, 23, 50}; // lưu khoảng cách từng đoạn
-int dir[13] = {1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 1};                  // 13 đoạn thì cua 12 lần
+float arr[13] = {0, 45, 73, 45, 23, 73, 23, 23, 25, 23, 25, 23, 50}; // lưu khoảng cách từng đoạn
+int dir[13] = {1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 1, -1};              // 13 đoạn thì cua 12 lần, lần cuối ko chạy
 int lengthArr = 13, steps;
 float distance;
 const float R = 7.071; // R là khoảng cách tâm trục tới lốp (cm)
@@ -164,4 +164,5 @@ void maze() // hàm gọi chạy mê cung
             turnLeft(pi / 2);
         delay(200);
     }
+    // kt=false bắt lại line
 }
